@@ -1,0 +1,116 @@
+
+<!DOCTYPE html>
+
+<html>
+<head>
+<title>FLT3-ITD Nomenclature REST API</title>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
+<script src="jsonview.js"></script>
+
+<script>
+
+var variant;
+
+function getVariant() {
+    
+    if(document.querySelector("#nucleotideSequence").value == "") {
+        return;
+    }
+    
+    document.querySelector("#working").style.display = "block";
+    var xhttp = new XMLHttpRequest();
+    xhttp.open("GET",
+      "resources/variants/nucleotideSequence/"
+      + document.querySelector("#nucleotideSequence").value, true
+    );
+    xhttp.setRequestHeader("Content-Type", "application/json");
+    xhttp.responseType = "json";
+    xhttp.onload = function() {
+        variant = this.response;
+        document.querySelector("#jsonRaw").innerHTML = "<pre>" + JSON.stringify(variant, null, 2) + "<pre>";
+        document.querySelector("#json").innerHTML = "";
+        var tree = jsonview.create(variant);
+        jsonview.render(tree, document.querySelector("#json"));
+        jsonview.expand(tree);
+        curlSample();
+        document.querySelector("#working").style.display = "none";
+        return;
+    }
+    xhttp.send();
+    return;
+    
+}
+
+function curlSample() {
+
+    document.querySelector("#curl").innerHTML = "<pre>curl -X GET -H 'Content-Type: application/json' \\<br/>"
+        + "https://trddx.emory.edu/flt3nomen-service/resources/variants/nucleotideSequence/" + variant.nucleotideSequence + "</pre>";
+    return;
+        
+}
+
+window.addEventListener("load", function() {
+
+    document.querySelector("#GET").addEventListener("click", function() {
+        getVariant();
+        return;
+    });
+
+    return;
+
+});
+
+</script>
+
+<style>
+    
+body {
+    font-family: monospace; 
+}
+    
+</style>
+
+</head>
+
+<body>
+<div id="working" style="position: fixed; top: 0px; width: 150px; left: 50%; margin-left: -75px; text-align: center; background-color: red; color: white; font-weight: bold; display: none;">working...</div>
+<center><h1>FLT3-ITD Nomenclature REST API Objects & Endpoints<h1></center>
+<center>January 28, 2022</center>
+
+<h1>Background</h1>
+
+<p>This REST API generates HGVS nomenclature for FLT3-ITD nucleotide sequences
+   that include a FLT3 ITD and flanking wild-type sequence. It is a simple
+   REST wrapper for the interactive web application at
+   <a href="https://flt3-itd-nomenclature.ue.r.appspot.com/">https://flt3-itd-nomenclature.ue.r.appspot.com/</a>
+   and only intended to facilitate systems integration. This service currently
+   consists of a single endpoint.</p>
+
+<h1>Endpoints</h1>
+
+    <h2>GET /flt3nomen-service-wrapper/resources/variants/nucleotideSequence/{nucleotideSequence}</h2>
+
+    <h3>Inputs (pre-populated with demonstration data)</h3>
+    <form>
+        <table>
+            <tr><td>Nucleotide Sequence</td><td>:</td><td><input id="nucleotideSequence" type="text" size="100" value="CAATTTAGGTATGAAAGCCAGCTACAGATGGTACAGGTGACCGGCTCCTCAGATAATGAGTACTTCTACGTTGATTTCAGAGAATATGAATATGATCTCAAATGGGAGTTTCCAAGAGAAAATTTAGAGTTTGGTAAGAATGGAATGTGCCAAATGTTTCTGCAGCATTTCCCAAGAGAAAATTTAGAGTTTGGTAAGAATGGAATGTGCCAAATGTTTCTGCAGCATTTCTTTTCCATTGGAAAATCTTTAAAATGCACGTACTCACCATTTGTCTTTGCAGGGAAGGTACTAGGATCAGGTGCTTTTGGAAAAGTGATGAACGCAACAGCTTATGGAATTAGCAAAACAGGAGTCTCAATCCAGGTTGCCGTCAAAATGCTGAAAGGTACAGTA"/></td></tr>
+            <tr><td></td><td></td><td><input id="GET" type="button" value="GET"/></td></tr>
+        </table>
+    </form>
+    <h3>Linux command-line RESTful Web Service Invocation using "curl"</h3>
+    <div id="curl" style="width: 100%; overflow-x: auto; border: 1px solid black;">
+        <i>No Variant GETted to service yet.</i>
+    </div>
+    <h3>JSON response (raw)</h3>
+    <div id="jsonRaw" style="width: 100%; overflow-x: auto; border: 1px solid black; font-family: monospace;">
+        <i>No Variant GETted to service yet.</i>
+    </div>
+    <h3>JSON response (in JSON Viewer)</h3>
+    <div id="json" style="width: 100%; overflow-x: auto; border: 1px solid black; font-family: monospace;">
+        <i>No Variant GETted to service yet.</i>
+    </div>
+ 
+</body>
+
+</html>
