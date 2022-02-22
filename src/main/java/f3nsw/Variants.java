@@ -39,6 +39,8 @@ public class Variants {
         String nucleotideDupIns;
         @JsonProperty
         String aaDupIns;
+	@JsonProperty
+	String[] additionalInfo;
         @JsonProperty
         String status;
         public Variant() {
@@ -73,7 +75,7 @@ public class Variants {
             CloseableHttpResponse response = httpClient.execute(post);
         ) {
 
-            Pattern p = Pattern.compile(" *FLT3-ITD \\((.*) bp\\): (c\\..*) \\((p\\..*)\\)<br> *(chr13.*)<br><br> *Duplicated\\/Inserted NT \\(.* bp\\): \\[(.*)]<br> *Duplicated\\/Inserted AA \\((.*) AA\\): \\[(.*)]<br><br> *Additional information:.*");
+            Pattern p = Pattern.compile(" *FLT3-ITD \\((.*) bp\\): (c\\..*) \\((p\\..*)\\)<br> *(chr13.*)<br><br> *Additional information:<br> *Full Duplicated NT sequence \\(.* bp\\): \\[(.*)]<br> *Full ins\\/dup AA sequence \\((.*) AA\\): \\[(.*)]<br><br>(.*)");
 
             BufferedReader htmlStream = new BufferedReader(new InputStreamReader(response.getEntity().getContent()));
 
@@ -84,7 +86,7 @@ public class Variants {
 
                     variant.status = "ERROR";
 
-                    Pattern pErrorDetail = Pattern.compile("<h2>(.*)(<\\/h2>|<br>)");
+                    Pattern pErrorDetail = Pattern.compile("<h3>(.*)(<\\/h3>|<br>)");
 
                     while((htmlLine = htmlStream.readLine()) != null) {
 
@@ -108,6 +110,7 @@ public class Variants {
                     variant.nucleotideDupIns = m.group(5);
                     variant.aaDupIns = m.group(7);
                     variant.status = "OK";
+		    variant.additionalInfo = m.group(8).split("<br>");
                     break;
                 }
 
