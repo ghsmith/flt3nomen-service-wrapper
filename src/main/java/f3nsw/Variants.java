@@ -35,6 +35,8 @@ public class Variants {
         String hgvsp;
         @JsonProperty
         String hgvsc;
+	@JsonProperty
+	String hgvsg;
         @JsonProperty
         String nucleotideDupIns;
         @JsonProperty
@@ -75,7 +77,7 @@ public class Variants {
             CloseableHttpResponse response = httpClient.execute(post);
         ) {
 
-            Pattern p = Pattern.compile(" *FLT3-ITD \\((.*) bp\\): (c\\..*) \\((p\\..*)\\)<br> *(chr13.*)<br><br> *Additional information:<br> *Full Duplicated NT sequence \\(.* bp\\): \\[(.*)]<br> *Full ins\\/dup AA sequence \\((.*) AA\\): \\[(.*)]<br><br>(.*)");
+            Pattern p = Pattern.compile(" *FLT3-ITD \\((.*) bp\\): (c\\..*) \\((p\\..*)\\)<br> *(chr13.*)<br><br> *Additional information:<br>.*NT sequence \\(.* bp\\): \\[(.*)]<br>.*AA sequence \\((.*) AA\\): \\[(.*)]<br><br>(.*)");
 
             BufferedReader htmlStream = new BufferedReader(new InputStreamReader(response.getEntity().getContent()));
 
@@ -107,6 +109,7 @@ public class Variants {
                     variant.aaLength = Integer.valueOf(m.group(6));
                     variant.hgvsp = m.group(3);
                     variant.hgvsc = m.group(2);
+                    variant.hgvsg = m.group(4);
                     variant.nucleotideDupIns = m.group(5);
                     variant.aaDupIns = m.group(7);
                     variant.status = "OK";
