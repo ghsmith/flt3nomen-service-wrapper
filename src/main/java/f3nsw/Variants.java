@@ -88,13 +88,13 @@ public class Variants {
 
                     variant.status = "ERROR";
 
-                    Pattern pErrorDetail = Pattern.compile("<h3>(.*)(<\\/h3>|<br>)");
+                    Pattern pErrorDetail1 = Pattern.compile("<h3>(.*)$");
 
                     while((htmlLine = htmlStream.readLine()) != null) {
 
-                        Matcher mErrorDetail = pErrorDetail.matcher(htmlLine);
+                        Matcher mErrorDetail = pErrorDetail1.matcher(htmlLine);
                         if(mErrorDetail.matches()) {
-                            variant.status = "ERROR: " + mErrorDetail.group(1);
+                            variant.status = mErrorDetail.group(1);
                             break;
                         }
                     }
